@@ -34,7 +34,7 @@ The first program runs the other two every minute.  (Linux can do this for me.)
 
 The second program reads a file and looks through the contents and if it sees the information that tells it that airlock 5 is open, it prints out the escape sequence 8AR7W98.  There's a text file on the system that contains characters.  Each character is ascii encoded.  8-bits.  Each bit is a 0 or 1.  0 means the door is shut.  1 means the door is open.  The fifth bit is from the right... so 00010000 would be the fifth door open.  10000000 is the 8th door open.  11111111 is all eight doors open.  I found a printable ascii table in my archives.
 
-https://i.pinimg.com/474x/7a/80/4b/7a804be53c3c44ee6b32ef956f11b658.jpg
+![ascii binary table](https://i.pinimg.com/474x/7a/80/4b/7a804be53c3c44ee6b32ef956f11b658.jpg)
 
 It looks like there are several characters that could mean the 5th bit is on.  So I'll need to watch for one of those and if I see it, print out the escape sequence.
 
