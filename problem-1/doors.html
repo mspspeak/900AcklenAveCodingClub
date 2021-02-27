@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+        <script lang="javascript">
+
+            View = {};
+            /// Changes the color of the row based if isOn is true... green for yes, red for no.
+            View._toggleTable = function (id, isOn) {
+                var el = $("#" + id);
+                if (isOn) {
+                    el.removeClass( "table-danger" ).addClass( "table-success" );
+                } else  {                    
+                    el.removeClass( "table-success" ).addClass( "table-danger" );
+                }
+            }
+
+            //Outputs our helper text and changes the rows.
+            View.Draw = function(doors,value) {
+                var decimalValue = value.charCodeAt(0);
+                const c = decimalValue.toString(2);
+                $("#readInput").html(value + " is " + decimalValue + " is " + c);
+
+                for (i=0;i<doors.length;i++)
+                {
+                    View._toggleTable("d_" + (i+1), doors[i].isOpen);
+                }
+            }
+            
+            //fancy promise code
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async function Run() {
+                var text = $("#fileinput").val(),
+                    textArray = text.split(""),
+                    doors = [
+                        {isOpen:false},
+                        {isOpen:false},
+                        {isOpen:false},
+                        {isOpen:false},
+                        {isOpen:false},
+                        {isOpen:false},
+                        {isOpen:false},
+                        {isOpen:false}
+                    ];
+
+                //for each character in the text box
+                for (j=0; j< textArray.length; j++) {
+
+                    //convert the text letter to a decimal number
+                    var value = textArray[j];
+                    var decimalValue = value.charCodeAt(0);
+                    var bitValue=1;
+
+                    //fix out if each of the doors are open or closed
+                    for (x=0;x<doors.length;x++)
+                    {
+                        //bit manipulation math trick here.
+                        //we are using a "bit mask" to tease out if the number
+                        //has a 1 in various binary number places...
+                        //1, 2, 4, 8, 16, 32, 64, 128
+                        doors[x].isOpen = (decimalValue & bitValue) === bitValue;
+                        bitValue = bitValue * 2;
+                    }
+                    //draw the doors for this letter
+                    View.Draw(doors, value);
+
+                    //wait for some sleep to happen (fancy promises code)
+                    await sleep(500);   
+                };             
+            }
+
+            //when the page is fully loaded.
+            $(document).ready(function() {
+                //set up the button to run the test
+                $("#runInput").on("click", Run);
+            });
+
+        </script>
+    </head>
+    <body>
+        <div class="container"><h1>Test Door Files</h1></div>
+        <div class="container">                                
+            <div class="mb-3">
+                <label for="fileinput" class="form-label">Copy Your Door File Here:</label>
+                <textarea class="form-control" id="fileinput" rows="6" ></textarea>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit" id="runInput" value="Run Doors">Run Doors</button>  
+            </div>
+            <div class="mb-3">
+                <div id="readInput"></div>     
+            </div>
+            <div class="mb-3">
+                <table class="table">
+                    <tr>
+                        <td id="d_1" class="table-danger">Door 1</td>
+                        <td id="d_2" class="table-danger">Door 2</td>
+                        <td id="d_3" class="table-danger">Door 3</td>
+                        <td id="d_4" class="table-danger">Door 4</td>
+                    </tr>
+                    <tr>                    
+                        <td id="d_5" class="table-danger">Door 5</td>
+                        <td id="d_6" class="table-danger">Door 6</td>
+                        <td id="d_7" class="table-danger">Door 7</td>
+                        <td id="d_8" class="table-danger">Door 8</td>
+                    </tr>
+                </table>
+            </div>
+        </div> 
+    </body>
+</html>
